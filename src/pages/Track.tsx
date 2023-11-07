@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import Categories from "../../../untitled2/src/Categories";
+import Categories from "../component/Categories";
 import axios from 'axios'
 import {Models} from "../models";
-import {useTheme} from "../../../untitled2/src/component/ThemeContext";
+import {useTheme} from "../component/ThemeContext";
 import { useTranslation } from 'react-i18next';
 import ReactPaginate from 'react-paginate';
-import SearchInput from "../../../untitled2/src/component/SearchInput";
+import SearchInput from "../component/SearchInput";
 
 const Track = () => {
     const [openArticle, setOpenArticle] = useState<number | null>(null);
