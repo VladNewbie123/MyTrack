@@ -71,19 +71,16 @@ const Track = () => {
         const query = searchParams.get('query');
         if (query) {
             setValue(query);
+            handleSearch(query); // Вызываем функцию поиска при обновлении URL
         }
     };
 
     // useEffect для выполнения поиска при загрузке страницы
     useEffect(() => {
+        performSearchFromURL();
         fetchData(i18n.language); // Вызываем fetchData с текущим языком
         performSearchFromURL(); // Вызываем performSearchFromURL при загрузке страницы
-    }, [i18n.language]);
-
-    // useEffect для выполнения поиска при изменении параметров URL
-    useEffect(() => {
-        performSearchFromURL(); // Вызываем performSearchFromURL при изменении URL
-    }, [window.location.search]);
+    }, [i18n.language, window.location.search]);
 
     // Функция для выполнения поиска
     const handleSearch = (query: string) => {

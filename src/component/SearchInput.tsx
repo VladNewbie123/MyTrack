@@ -1,31 +1,44 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, {useState, ChangeEvent, useEffect} from 'react';
 import {useTheme} from "./ThemeContext";
-import { useNavigate } from "react-router-dom";
+import {useNavigate, useLocation} from "react-router-dom";
+import {useDispatch} from 'react-redux';
+import {updateQuery} from '../searchSlice';
 
 interface SearchInputProps {
-    onSearch: (query: string) => void;
+    onSearch: (filteredItems: string) => void;
 }
 
-const SearchInput = ({ onSearch }: SearchInputProps) => {
+const SearchInput = ({onSearch}: SearchInputProps) => {
     const [searchQuery, setSearchQuery] = useState<string>('');
-    const { theme } = useTheme();
+    const {theme} = useTheme();
     const history = useNavigate();
+    const dispatch = useDispatch();
+    const location = useLocation();
 
+
+    useEffect(() => {
+        // Обновляем поле ввода при изменении URL
+        const searchParams = new URLSearchParams(location.search);
+        const query = searchParams.get('query') || '';
+        setSearchQuery(query);
+        onSearch(query);
+    }, [location.search, onSearch]);
 
     const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
         const newQuery = event.target.value;
         setSearchQuery(newQuery);
+
+        // Диспатчим экшен для обновления запроса поиска в хранилище
+        dispatch(updateQuery(newQuery));
+
         onSearch(newQuery);
 
-        // Устанавливаем параметры URL при изменении ввода
-        const searchParams = new URLSearchParams(window.location.search);
+
+        const searchParams = new URLSearchParams(location.search);
         searchParams.set('query', newQuery);
-        window.history.pushState({}, '', `?${searchParams.toString()}`);
+        history(`/track?${searchParams.toString()}`);
 
-        // Переход на страницу "Track" с параметром запроса
-        history(`/track?query=${newQuery}`);
     };
-
 
     return (
         <div>
