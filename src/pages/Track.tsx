@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Categories from "../component/Categories";
-import axios from 'axios'
-import {Models} from "../models";
+import useFetchData from "../useFetchData";
 import {useTheme} from "../component/ThemeContext";
 import { useTranslation } from 'react-i18next';
 import ReactPaginate from 'react-paginate';
@@ -9,9 +8,7 @@ import SearchInput from "../component/SearchInput";
 
 const Track = () => {
     const [openArticle, setOpenArticle] = useState<number | null>(null);
-    const [error, setError] = useState<Error | null>(null);
-    const [isLoaded, setIsLoaded] = useState(false);
-    const [items, setItems] = useState<Models[] | null>();
+
     const [value, setValue] = useState("");
     const {theme} = useTheme();
     const { t, i18n } = useTranslation();
@@ -20,7 +17,9 @@ const Track = () => {
     const [searchQuery, setSearchQuery] = useState(''); // Стейт для запроса поиска
 
 
-    const filteredCountries = (items || []).filter((item) => {
+    const { isLoaded, items, error, fetchData } = useFetchData();
+
+    const filteredCountries = (items || []).filter((item:any) => {
         return item.artistName.toLowerCase().includes(value.toLowerCase());
     });
 
@@ -53,17 +52,17 @@ const Track = () => {
         return Math.floor(s % 60);
     }
 
-    // Функция для выполнения запроса к данным на основе текущего языка
-    const fetchData = async (lang: string) => {
-        try {
-            const response = await axios.get(`data_${lang}.json`);
-            setIsLoaded(true);
-            setItems(response.data.filter((item: any) => item.wrapperType === 'track'));
-        } catch (error) {
-            setIsLoaded(true);
-            setError(error as Error);
-        }
-    };
+   // // Функция для выполнения запроса к данным на основе текущего языка
+   // const fetchData = async (lang: string) => {
+   //     try {
+   //         const response = await axios.get(`data_${lang}.json`);
+   //         setIsLoaded(true);
+   //         setItems(response.data.filter((item: any) => item.wrapperType === 'track'));
+   //     } catch (error) {
+   //         setIsLoaded(true);
+   //         setError(error as Error);
+   //     }
+   // };
 
     // Функция для выполнения поиска на основе параметров URL
     const performSearchFromURL = () => {
@@ -103,7 +102,7 @@ const Track = () => {
             <div className='pt-20 pb-4 px-0'>
                 <SearchInput onSearch={handleSearch}/>
                 <Categories/>
-                {currentItems.map((item, index) => (
+                {currentItems.map((item:any, index:number) => (
                     <article className={`article1  ${openArticle === index ? 'expanded' : ''} ${theme === 'dark' ? 'dark-article' : ''}`} key={index} >
                         <img className='img' src={item.artworkUrl100} alt='img'/>
                         <p className={`p1 ${theme === 'dark' ? 'dark-p' : ''}`}>{item.artistName}</p>
